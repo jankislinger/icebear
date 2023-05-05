@@ -1,8 +1,6 @@
-
 use gtk::{Align, Grid, Label};
 use polars::frame::DataFrame;
 use gtk::prelude::*;
-use polars::io::SerReader;
 use polars::prelude::*;
 
 pub fn grid_from_frame(df: &DataFrame) -> Grid {
