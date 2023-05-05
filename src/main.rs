@@ -1,18 +1,16 @@
+use gtk::gio::{ApplicationFlags};
 use gtk::prelude::*;
 use gtk::{Application, ApplicationWindow, glib};
 use std::env;
-use gtk::gio::{ApplicationFlags};
 
 mod tables;
 
 const APP_ID: &str = "org.dfgui.HelloWorld";
 
-
 fn main() -> glib::ExitCode {
 
     let args: Vec<String> = env::args().collect();
     let file_name = args[1].clone();
-
 
     let app = Application::builder()
         .application_id(APP_ID)
@@ -38,7 +36,7 @@ fn build_ui(app: &Application, file_name: &str) {
 }
 
 fn table_container(file_name: &str) -> gtk::Grid {
-    let df = tables::load_frame(&file_name);
+    let df = tables::run_query(&file_name, "select * from data where completion > 0.9");
     let grid = tables::grid_from_frame(&df);
     grid
 }

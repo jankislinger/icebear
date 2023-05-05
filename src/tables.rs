@@ -1,7 +1,7 @@
-use gtk::{Align, Grid, Label};
+use gtk::{Align, Grid, Label, traits::GridExt};
 use polars::frame::DataFrame;
-use gtk::prelude::*;
-use polars::prelude::*;
+use polars_lazy::frame::{LazyFrame, ScanArgsParquet};
+use polars_sql::SQLContext;
 
 pub fn grid_from_frame(df: &DataFrame) -> Grid {
     let grid = Grid::builder()
@@ -36,23 +36,49 @@ pub(crate) fn load_frame(file_name: &str) -> DataFrame {
 }
 
 
+pub(crate) fn run_query(file_name: &str, query: &str) -> DataFrame {
+    let args = ScanArgsParquet::default();
+    let lazy = LazyFrame::scan_parquet(&file_name, args)
+        .expect(&format!("Cannot load parquet {}", &file_name));
+    let mut ctx = SQLContext::try_new().unwrap();
+    ctx.register("data", lazy);
+    ctx.execute(&query)
+        .unwrap()
+        .limit(25)
+        .collect()
+        .unwrap()
+}
+
+
 #[cfg(test)]
 mod test {
-    use polars::frame::row::Row;
-    use polars::prelude::AnyValue;
+    use polars::df;
+    use polars::prelude::NamedFrom;
+    use polars_lazy::prelude::*;
+    use polars_sql::SQLContext;
     use super::*;
 
     #[test]
     fn test_init() {
         gtk::init().unwrap();
 
-        let df = DataFrame::from_rows(&vec![
-            Row::new(vec![
-                AnyValue::from(1),
-                AnyValue::from(3),
-                AnyValue::from(3),
-            ]),
-        ]).unwrap();
+        let df = df! {
+            "x" => &[1, 2, 3],
+        }.unwrap();
         let _ = grid_from_frame(&df);
+    }
+
+    #[test]
+    fn test_doc() {
+        let mut ctx = SQLContext::try_new().unwrap();
+        let df = df! {
+           "a" =>  &[1, 2, 3],
+        }.unwrap();
+
+        let a = LazyFrame::try_from(df.clone().lazy());
+
+        ctx.register("df", a.unwrap());
+        let sql_df = ctx.execute("SELECT * FROM df").unwrap().collect().unwrap();
+        assert!(sql_df.frame_equal(&df));
     }
 }

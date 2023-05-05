@@ -8,4 +8,7 @@ edition = "2021"
 [dependencies]
 graphene-sys = { version = "0.17.0" }
 gtk = { version = "0.6.6", package = "gtk4", features = ["v4_6"] }
-polars = { version = "0.28.0", features = ["csv-file", "parquet", "lazy", "dtype-full"] }
+polars = { version = "0.28.0", features = ["parquet", "dtype-full"] }
+polars-sql = "0.28.0"
+polars-lazy = "0.28.0"
+
