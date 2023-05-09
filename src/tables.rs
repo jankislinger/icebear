@@ -15,13 +15,14 @@ pub fn grid_from_frame(df: &DataFrame) -> Grid {
     for (i, col) in df.iter().into_iter().enumerate() {
         col.name();
 
+        let i = i as i32;
         let header = Label::new(Some(col.name()));
-        grid.attach(&header, i as i32, 0, 1, 1);
+        grid.attach(&header, i, 0, 1, 1);
 
         for (j, x) in col.iter().into_iter().enumerate() {
             let j = (j as i32) + 1;
             let label = Label::new(Some(&format!("{}", x)));
-            grid.attach(&label, i as i32, j, 1, 1);
+            grid.attach(&label, i, j, 1, 1);
         }
     }
     grid
