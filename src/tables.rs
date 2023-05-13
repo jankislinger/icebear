@@ -1,7 +1,7 @@
 use gtk::{Align, Grid, Label, traits::GridExt};
 use polars::frame::DataFrame;
 use polars_lazy::frame::{LazyFrame, ScanArgsParquet};
-use polars_sql::SQLContext;
+
 
 pub fn grid_from_frame(df: &DataFrame) -> Grid {
     let grid = Grid::builder()
@@ -28,27 +28,12 @@ pub fn grid_from_frame(df: &DataFrame) -> Grid {
     grid
 }
 
-pub(crate) fn load_frame(file_name: &str) -> DataFrame {
+pub(crate) fn load_frame(file_name: &str) -> LazyFrame {
     let args = ScanArgsParquet::default();
     LazyFrame::scan_parquet(&file_name, args)
         .expect(&format!("Cannot load parquet {}", &file_name))
-        .limit(30)
-        .collect().unwrap()
 }
 
-
-pub(crate) fn run_query(file_name: &str, query: &str) -> DataFrame {
-    let args = ScanArgsParquet::default();
-    let lazy = LazyFrame::scan_parquet(&file_name, args)
-        .expect(&format!("Cannot load parquet {}", &file_name));
-    let mut ctx = SQLContext::try_new().unwrap();
-    ctx.register("data", lazy);
-    ctx.execute(&query)
-        .unwrap()
-        .limit(25)
-        .collect()
-        .unwrap()
-}
 
 
 #[cfg(test)]
