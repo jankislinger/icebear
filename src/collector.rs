@@ -15,7 +15,7 @@ impl DataCollector {
         sql_context.register("data", lazy_frame);
 
         let query = gtk::Text::builder()
-            .text("select * from data where true limit 30")
+            .text("select * from data where true limit 150")
             .build();
 
         let button = gtk::Button::builder()
@@ -29,6 +29,7 @@ impl DataCollector {
         let table_wrapper = gtk::ScrolledWindow::builder()
             .hscrollbar_policy(gtk::PolicyType::Never)
             .vscrollbar_policy(gtk::PolicyType::Automatic)
+            .height_request(600)
             .build();
 
         DataCollector { sql_context, query, button, table_wrapper }
@@ -61,12 +62,21 @@ impl DataCollector {
         let table_wrapper = self.table_wrapper.clone();
 
         self.button.connect_clicked(move |_| {
+            // TODO: can I call method fill_table here?
             let query = query.text().as_str().to_owned();
             let df = sql_context.clone().execute(&query).unwrap().collect().unwrap();
             let grid = tables::grid_from_frame(&df);
             table_wrapper.set_child(Some(&grid));
         });
 
+        self.fill_table();
         window
+    }
+
+    fn fill_table(&mut self) {
+        let query = self.query.text().as_str().to_owned();
+        let df = self.sql_context.clone().execute(&query).unwrap().collect().unwrap();
+        let grid = tables::grid_from_frame(&df);
+        self.table_wrapper.set_child(Some(&grid));
     }
 }
