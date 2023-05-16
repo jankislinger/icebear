@@ -45,3 +45,11 @@ Type=Application
 
 Just change `path-to-project` in `Exec` and `Icon`.
 We'll move the binary somewhere outside the project at some point.
+
+### Step 3: Add logo to the mimetype
+
+```shell
+export SIZE=256
+convert logo.png -resize $SIZEx$SIZE /tmp/logo.png
+xdg-icon-resource install --context mimetypes --size $SIZE /tmp/logo.png application-x-parquet
+```
