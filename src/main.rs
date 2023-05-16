@@ -31,6 +31,6 @@ fn main() -> glib::ExitCode {
 fn build_ui(app: &Application, file_name: &str) {
     let frame = tables::load_frame(&file_name);
     collector::DataCollector::from_lazy_frame(frame)
-        .make_window(app)
+        .make_window(app, &file_name)
         .present();
 }

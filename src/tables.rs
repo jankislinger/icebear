@@ -9,7 +9,7 @@ pub fn grid_from_frame(df: &DataFrame) -> Grid {
         .column_homogeneous(false)
         .row_spacing(5)
         .column_spacing(25)
-        .halign(Align::Start)
+        .valign(Align::Start)
         .build();
 
     for (i, col) in df.iter().into_iter().enumerate() {

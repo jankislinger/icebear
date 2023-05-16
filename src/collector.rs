@@ -1,10 +1,11 @@
 use crate::tables;
-use gtk::traits::{BoxExt, ButtonExt, EditableExt, GtkWindowExt};
+use gtk::traits::{BoxExt, ButtonExt, GtkWindowExt, TextViewExt};
 use polars_lazy::frame::LazyFrame;
+use gtk::prelude::TextBufferExt;
 
 pub(crate) struct DataCollector {
     sql_context: polars_sql::SQLContext,
-    query: gtk::Text,
+    query: gtk::TextView,
     button: gtk::Button,
     table_wrapper: gtk::ScrolledWindow,
 }
@@ -14,14 +15,24 @@ impl DataCollector {
         let mut sql_context = polars_sql::SQLContext::try_new().unwrap();
         sql_context.register("data", lazy_frame);
 
-        let query = gtk::Text::builder()
-            .text("select * from data where true limit 150")
+        let query = gtk::TextView::builder()
+            .editable(true)
+            .monospace(true)
+            .wrap_mode(gtk::WrapMode::Word)
+            .height_request(200)
+            .margin_top(8)
+            .margin_bottom(8)
+            .margin_start(12)
+            .margin_end(12)
             .build();
+
+        query.buffer().set_text("select *\nfrom data\nwhere true\nlimit 150");
+
 
         let button = gtk::Button::builder()
             .label("Update")
-            .margin_top(12)
-            .margin_bottom(12)
+            .margin_top(8)
+            .margin_bottom(8)
             .margin_start(12)
             .margin_end(12)
             .build();
@@ -30,15 +41,19 @@ impl DataCollector {
             .hscrollbar_policy(gtk::PolicyType::Never)
             .vscrollbar_policy(gtk::PolicyType::Automatic)
             .height_request(600)
+            .margin_top(8)
+            .margin_bottom(8)
+            .margin_start(12)
+            .margin_end(12)
             .build();
 
         DataCollector { sql_context, query, button, table_wrapper }
     }
 
-    pub(crate) fn make_window(&mut self, app: &gtk::Application) -> gtk::ApplicationWindow {
+    pub(crate) fn make_window(&mut self, app: &gtk::Application, subtitle: &str) -> gtk::ApplicationWindow {
         let window = gtk::ApplicationWindow::builder()
             .application(app)
-            .title("Polars Viewer")
+            .title(format!("Polars Viewer: {}", subtitle))
             .default_width(800)
             .default_height(600)
             .build();
@@ -63,7 +78,8 @@ impl DataCollector {
 
         self.button.connect_clicked(move |_| {
             // TODO: can I call method fill_table here?
-            let query = query.text().as_str().to_owned();
+            let (start, end) = query.buffer().bounds();
+            let query = query.buffer().text(&start, &end, true);
             let df = sql_context.clone().execute(&query).unwrap().collect().unwrap();
             let grid = tables::grid_from_frame(&df);
             table_wrapper.set_child(Some(&grid));
@@ -74,8 +90,12 @@ impl DataCollector {
     }
 
     fn fill_table(&mut self) {
-        let query = self.query.text().as_str().to_owned();
-        let df = self.sql_context.clone().execute(&query).unwrap().collect().unwrap();
+        let (start, end) = self.query.buffer().bounds();
+        let query = self.query.buffer().text(&start, &end, true);
+        let df = self.sql_context.clone().execute(&query)
+            .expect("SQL query failed")
+            .collect()
+            .expect("Query cannot be collected");
         let grid = tables::grid_from_frame(&df);
         self.table_wrapper.set_child(Some(&grid));
     }
