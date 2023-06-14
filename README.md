@@ -1,9 +1,23 @@
 # GUI for Data Frames
 
+A simple binary to view parquet files.
+This allows you to open parquet files in an app by double-clicking them.
+You can also run simple SQL query on top of the data to see easily what's in there.
+
+
+## Build
 
 ```shell
-cargo build --release
+cargo install --path .
 ```
+
+Then you can verify by running:
+
+```shell
+dfgui --help
+```
+
+If that doesn't work, make sure you have `~/.cargo/bin` in your `PATH`.
 
 ## Associate with parquet files
 
@@ -47,6 +61,10 @@ Just change `path-to-project` in `Exec` and `Icon`.
 We'll move the binary somewhere outside the project at some point.
 
 ### Step 3: Add logo to the mimetype
+
+This is just experimental.
+Adding logo in previous step should have worked.
+The downside is that the project needs to stay at the same location.
 
 ```shell
 export SIZE=256
