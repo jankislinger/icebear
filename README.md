@@ -1,4 +1,4 @@
-# GUI for Data Frames
+# IceBear - a simple GUI for Data Frames
 
 A simple binary to view parquet files.
 This allows you to open parquet files in an app by double-clicking them.
@@ -14,7 +14,7 @@ cargo install --path .
 Then you can verify by running:
 
 ```shell
-dfgui --help
+iceberg --help
 ```
 
 If that doesn't work, make sure you have `~/.cargo/bin` in your `PATH`.
@@ -50,8 +50,8 @@ In `/usr/share/applications/` or `~/.local/share/applications/` create a file `p
 
 ```
 [Desktop Entry]
-Exec=/path-to-project/dfgui/target/release/dfgui %f
-Icon=/path-to-project/dfgui/logo.png
+Exec=/path-to-project/iceberg/target/release/iceberg %f
+Icon=/path-to-project/iceberg/logo.png
 Name=Parquet GUI
 Terminal=false
 Type=Application
