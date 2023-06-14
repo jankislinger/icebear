@@ -4,7 +4,6 @@ A simple binary to view parquet files.
 This allows you to open parquet files in an app by double-clicking them.
 You can also run simple SQL query on top of the data to see easily what's in there.
 
-
 ## Build
 
 ```shell
@@ -14,14 +13,15 @@ cargo install --path .
 Then you can verify by running:
 
 ```shell
-iceberg --help
+icebear --help
 ```
 
 If that doesn't work, make sure you have `~/.cargo/bin` in your `PATH`.
 
 ## Associate with parquet files
 
-Taken from [stack exchange](https://unix.stackexchange.com/questions/490487/how-to-associate-file-extensions-with-my-own-python-script-in-linux).
+Taken
+from [stack exchange](https://unix.stackexchange.com/questions/490487/how-to-associate-file-extensions-with-my-own-python-script-in-linux).
 
 ### Step 1: Create a new mime type
 
@@ -50,8 +50,8 @@ In `/usr/share/applications/` or `~/.local/share/applications/` create a file `p
 
 ```
 [Desktop Entry]
-Exec=/path-to-project/iceberg/target/release/iceberg %f
-Icon=/path-to-project/iceberg/logo.png
+Exec=/path-to-project/icebear/target/release/icebear %f
+Icon=/path-to-project/icebear/logo.png
 Name=Parquet GUI
 Terminal=false
 Type=Application

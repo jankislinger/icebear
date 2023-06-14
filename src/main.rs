@@ -10,7 +10,7 @@ use std::env;
 mod tables;
 mod collector;
 
-const APP_ID: &str = "org.dfgui.HelloWorld";
+const APP_ID: &str = "org.icebear.IceBearExplorer";
 
 fn main() -> glib::ExitCode {
     let args: Vec<String> = env::args().collect();
