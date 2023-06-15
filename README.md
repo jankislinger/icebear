@@ -6,6 +6,16 @@ You can also run simple SQL query on top of the data to see easily what's in the
 
 ## Build
 
+### Prerequisites
+
+```shell
+sudo apt install -y build-essential \
+  librust-atk-dev libcairo2-dev libpango1.0-dev \
+  libgtk-4-dev libgdk-pixbuf2.0-dev
+```
+
+### Release build
+
 ```shell
 cargo install --path .
 ```
