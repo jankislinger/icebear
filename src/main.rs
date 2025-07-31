@@ -1,28 +1,28 @@
-
-use gtk::gio::{ApplicationFlags};
+use gtk::gio::ApplicationFlags;
 use gtk::prelude::*;
-use gtk::{Application, glib};
-use std::env;
+use gtk::{glib, Application};
 
-
-
-
-mod tables;
 mod collector;
+mod tables;
 
 const APP_ID: &str = "org.icebear.IceBearExplorer";
 
 fn main() -> glib::ExitCode {
-    let args: Vec<String> = env::args().collect();
-    let file_name = args[1].clone();
-
     let app = Application::builder()
         .application_id(APP_ID)
         .flags(ApplicationFlags::HANDLES_OPEN)
         .build();
 
-    app.connect_open(move |a, _, _| {
-        build_ui(a, &file_name);
+    app.connect_open(|app, files, _| {
+        if let Some(file) = files.first() {
+            if let Some(path) = file.path() {
+                build_ui(app, path.to_str().unwrap());
+                return;
+            }
+        }
+
+        eprintln!("No file provided. Usage: icebear <FILE>");
+        app.quit();
     });
 
     app.run()
